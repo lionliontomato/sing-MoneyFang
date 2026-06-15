@@ -164,16 +164,18 @@ body::before {
 
 h1, h2 {
  margin: 0;
- font-family: "Ma Shan Zheng", "Noto Serif TC", "DFKai-SB", serif;
- letter-spacing: .05em;
- font-weight: 400;
+ font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", sans-serif;
+ letter-spacing: .03em;
+ font-weight: 800;
 }
 
 h1 {
- font-size: clamp(54px, 10vw, 112px);
- line-height: .95;
+ font-size: clamp(42px, 7.6vw, 88px);
+ line-height: 1.12;
  color: #266a9d;
- text-shadow: 0 8px 26px rgba(77, 159, 210, .21);
+ font-weight: 900;
+ letter-spacing: .02em;
+ text-shadow: 0 6px 18px rgba(77, 159, 210, .18);
 }
 
 h2 { font-size: clamp(32px, 4vw, 52px); color: #2d719d; }
