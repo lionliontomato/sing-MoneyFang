@@ -2,108 +2,99 @@
 <html lang="zh-Hant">
 
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>慌慌の存鑽與存歌</title>
+  <meta name="description" content="慌慌の存鑽存歌查詢頁，只呈現 Google 試算表 A～E 欄資料。" />
 
- <meta charset="utf-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">🌸</text></svg>'>
 
- <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    .site-footer{
+      position:relative;
+      z-index:2;
+      max-width:980px;
+      margin:36px auto 24px;
+      padding:22px 18px;
+      text-align:center;
+      font-family:"Noto Serif TC","Noto Sans TC",serif;
+      color:rgba(92,82,78,.9);
+      font-size:14px;
+      line-height:1.8;
+    }
 
- <title>慌慌の存鑽與存歌</title>
+    .site-footer p{
+      margin:4px 0;
+    }
 
- <meta name="description" content="慌慌の存鑽存歌查詢頁，只呈現 Google 試算表 A～E 欄資料。" />
+    .site-footer a{
+      color:rgba(92,82,78,.98);
+      text-decoration:none;
+      border-bottom:1px solid rgba(92,82,78,.35);
+    }
 
- <link rel="preconnect" href="https://fonts.googleapis.com">
-
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
- <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="style.css" />
-<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">🌸</text></svg>'>
-
+    .site-footer a:hover{
+      opacity:.75;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="sky-glow"></div>
+  <div class="mist mist-a"></div>
+  <div class="mist mist-b"></div>
 
- <div class="sky-glow"></div>
+  <div class="floating-icons" aria-hidden="true">
+    <span style="--x:8%; --delay:0s; --duration:13s;">☁️</span>
+    <span style="--x:18%; --delay:2s; --duration:16s;">🌸</span>
+    <span style="--x:31%; --delay:5s; --duration:18s;">✦</span>
+    <span style="--x:49%; --delay:1s; --duration:14s;">♡</span>
+    <span style="--x:64%; --delay:4s; --duration:17s;">☁️</span>
+    <span style="--x:80%; --delay:3s; --duration:15s;">☁️</span>
+    <span style="--x:92%; --delay:6s; --duration:19s;">✧</span>
+  </div>
 
- <div class="mist mist-a"></div>
+  <main class="page-shell">
+    <section class="hero panel">
+      <div class="seal">女神</div>
+      <p class="eyebrow"></p>
+      <h1>慌慌の存鑽存歌</h1>
+      <p class="subtitle">謝謝尼的瓜單跟存鑽呀。</p>
 
- <div class="mist mist-b"></div>
+      <div class="search-card" role="search">
+        <label for="searchInput">懶得找就來查看看</label>
 
- <div class="floating-icons" aria-hidden="true">
+        <div class="search-row">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="查詢" />
+          <button id="clearBtn" type="button">顯示全部</button>
+        </div>
 
- <span style="--x:8%; --delay:0s; --duration:13s;">☁️</span>
+        <p id="resultText" class="result-text">資料載入中…</p>
+      </div>
+    </section>
 
- <span style="--x:18%; --delay:2s; --duration:16s;"></span>
- <span style="--x:31%; --delay:5s; --duration:18s;">✦</span>
+    <section class="panel content-panel" aria-label="存鑽資料查詢結果">
+      <div class="table-wrap">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
- <span style="--x:49%; --delay:1s; --duration:14s;"></span>
+  <footer class="site-footer">
+    <p>☁️ 謝謝大家的支持 ｜ 我愛莫蘭迪，莫蘭迪愛我</p>
+    <p>© 2026 LionLionTomato. All Rights Reserved.</p>
+    <p>本網站「慌慌の存鑽存歌」之頁面設計、程式架構、資料整理方式與視覺呈現，未經授權不得重製、改作或商業使用。</p>
+    <p><a href="copyright.html">著作權聲明與使用條款</a></p>
+  </footer>
 
- <span style="--x:64%; --delay:4s; --duration:17s;">️</span>
-
- <span style="--x:80%; --delay:3s; --duration:15s;">☁️</span>
-
- <span style="--x:92%; --delay:6s; --duration:19s;">✧</span>
-
- </div>
-
- <main class="page-shell">
-
- <section class="hero panel">
-
- <div class="seal">女神</div>
-
- <p class="eyebrow"></p>
-
- <h1>慌慌の存鑽存歌</h1>
-
- <p class="subtitle">謝謝尼的瓜單跟存鑽呀。</p>
- <div class="search-card" role="search">
-
- <label for="searchInput">懶得找就來查看看</label>
-
- <div class="search-row">
-
- <input id="searchInput" type="search" autocomplete="off" placeholder="查詢" />
-
- <button id="clearBtn" type="button">顯示全部</button>
-
- </div>
-
- <p id="resultText" class="result-text">資料載入中…</p>
-
- </div>
-
- </section>
-
- <section class="panel content-panel" aria-label="存鑽資料查詢結果">
-
- <div class="table-wrap">
-
- <table>
-
- <thead id="tableHead"></thead>
-
- <tbody id="tableBody"></tbody>
-
- </table>
-
- </div>
- </section>
-
- </main>
-
- <footer>
-
- <span>☁️ 謝謝大家的支持</span>
-
- <span>｜</span>
-
- <span>我愛莫蘭迪，莫蘭迪愛我</span>
-
- </footer>
-
- <script src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
 
 </html>
