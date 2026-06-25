@@ -1,34 +1,22 @@
 const SHEET_ID = "1-Ixjp1Pclti4MfjqAaROtjWZThi4ysXDaxk1SlTuPXk";
 
-const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-
 let headers = ["存鑽老闆", "存鑽數量", "存歌數量", "存爆數量", "總數"];
-
 let records = [];
 
 const colors = ["col-name", "col-diamond", "col-song", "col-bomb", "col-total"];
-
 const fmt = new Intl.NumberFormat("zh-Hant-TW");
-
 const $ = (selector) => document.querySelector(selector);
 
 function normalize(text) {
   return String(text ?? "").trim().toLowerCase();
 }
 
-// 數字會轉成數字；不是數字的內容會保留原文字，例如 ♾️、∞、無上限、VIP
 function toNumber(value) {
   const cleaned = String(value ?? "").replace(/,/g, "").trim();
-
   if (cleaned === "") return 0;
 
   const number = Number(cleaned);
-
-  if (Number.isFinite(number)) {
-    return number;
-  }
-
-  return cleaned;
+  return Number.isFinite(number) ? number : cleaned;
 }
 
 function escapeHtml(value) {
@@ -42,7 +30,6 @@ function escapeHtml(value) {
 
 function parseCSV(text) {
   const rows = [];
-
   let row = [];
   let cell = "";
   let inQuotes = false;
@@ -61,10 +48,8 @@ function parseCSV(text) {
       cell = "";
     } else if ((char === "\n" || char === "\r") && !inQuotes) {
       if (char === "\r" && next === "\n") i++;
-
       row.push(cell);
       rows.push(row);
-
       row = [];
       cell = "";
     } else {
@@ -78,20 +63,47 @@ function parseCSV(text) {
   return rows.filter(r => r.some(c => String(c).trim() !== ""));
 }
 
+function normalizeSettingKey(value) {
+  return String(value ?? "")
+    .replace(/[：:]/g, "")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+function addSetting(settings, key, value) {
+  const normalizedKey = normalizeSettingKey(key);
+  const normalizedValue = String(value ?? "").trim();
+
+  if (!normalizedKey || !normalizedValue) return;
+
+  if (normalizedKey.includes("網站標題")) settings["網站標題"] = normalizedValue;
+  if (normalizedKey.includes("網站小標題")) settings["網站小標題"] = normalizedValue;
+}
+
 function applySiteSettings(rows) {
   const settings = {};
 
   rows.forEach(row => {
-    const key = String(row[11] ?? "").trim();   // L 欄
-    const value = String(row[12] ?? "").trim(); // M 欄
+    const lKey = String(row[11] ?? "").trim();
+    const mValue = String(row[12] ?? "").trim();
 
-    if (key && value) {
-      settings[key] = value;
-    }
+    addSetting(settings, lKey, mValue);
+
+    row.forEach((cell, index) => {
+      const current = String(cell ?? "").trim();
+      const next = String(row[index + 1] ?? "").trim();
+
+      addSetting(settings, current, next);
+
+      const inlineMatch = current.match(/^(網站標題|網站小標題)\s*[：:]\s*(.+)$/);
+      if (inlineMatch) {
+        addSetting(settings, inlineMatch[1], inlineMatch[2]);
+      }
+    });
   });
 
-  const title = settings["網站標題"] || "慌慌の存鑽存歌";
-  const subtitle = settings["網站小標題"] || "謝謝尼的瓜單跟存鑽呀。";
+  const title = settings["網站標題"] || "";
+  const subtitle = settings["網站小標題"] || "";
 
   const siteTitle = $("#siteTitle");
   const siteSubtitle = $("#siteSubtitle");
@@ -99,16 +111,18 @@ function applySiteSettings(rows) {
   if (siteTitle) siteTitle.textContent = title;
   if (siteSubtitle) siteSubtitle.textContent = subtitle;
 
-  document.title = title;
+  document.title = title || "Loading...";
 }
 
 async function loadSheetData() {
-  const response = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+  const cacheBust = Date.now();
+  const sheetCsvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&_=${cacheBust}`;
+
+  const response = await fetch(sheetCsvUrl, { cache: "no-store" });
 
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
   const csvText = await response.text();
-
   const rows = parseCSV(csvText);
 
   if (rows.length < 2) throw new Error("試算表沒有可顯示的資料");
@@ -137,30 +151,40 @@ async function loadSheetData() {
 }
 
 function renderTable(items) {
-  $("#tableHead").innerHTML = `
+  const tableHead = $("#tableHead");
+  const tableBody = $("#tableBody");
+
+  if (!tableHead || !tableBody) return;
+
+  tableHead.innerHTML = `
     <tr>
       ${headers.map((h, index) => `<th class="${colors[index] || ""}">${escapeHtml(h)}</th>`).join("")}
     </tr>
   `;
 
-  $("#tableBody").innerHTML = items.map(item => `
-    <tr>
-      ${headers.map((h, index) => {
-        const value = index === 0
-          ? escapeHtml(item[h])
-          : typeof item[h] === "number"
-            ? fmt.format(item[h])
-            : escapeHtml(item[h]);
+  tableBody.innerHTML = items.length
+    ? items.map(item => `
+      <tr>
+        ${headers.map((h, index) => {
+          const value = index === 0
+            ? escapeHtml(item[h])
+            : typeof item[h] === "number"
+              ? fmt.format(item[h])
+              : escapeHtml(item[h]);
 
-        return `<td class="${index === 0 ? "name-cell" : ""}">${value}</td>`;
-      }).join("")}
-    </tr>
-  `).join("");
+          return `<td class="${index === 0 ? "name-cell" : ""}">${value}</td>`;
+        }).join("")}
+      </tr>
+    `).join("")
+    : `
+      <tr>
+        <td colspan="${headers.length}" class="empty-cell">目前沒有符合條件的資料</td>
+      </tr>
+    `;
 }
 
 function updateResultText(items, keyword) {
   const resultText = $("#resultText");
-
   if (!resultText) return;
 
   resultText.textContent = keyword
@@ -169,7 +193,10 @@ function updateResultText(items, keyword) {
 }
 
 function filterRecords() {
-  const keyword = $("#searchInput").value.trim();
+  const searchInput = $("#searchInput");
+  if (!searchInput) return;
+
+  const keyword = searchInput.value.trim();
   const key = normalize(keyword);
 
   const items = !key
@@ -181,8 +208,12 @@ function filterRecords() {
 }
 
 async function init() {
+  const resultText = $("#resultText");
+  const searchInput = $("#searchInput");
+  const clearBtn = $("#clearBtn");
+
   try {
-    $("#resultText").textContent = "資料載入中…";
+    if (resultText) resultText.textContent = "資料載入中…";
 
     await loadSheetData();
 
@@ -194,16 +225,22 @@ async function init() {
     records = [];
     renderTable(records);
 
-    $("#resultText").textContent = "資料載入失敗：請確認 Google 試算表已開放『知道連結的使用者可檢視』。";
+    if (resultText) {
+      resultText.textContent = "資料載入失敗：請確認 Google 試算表已開放『知道連結的使用者可檢視』。";
+    }
   }
 
-  $("#searchInput").addEventListener("input", filterRecords);
+  if (searchInput) {
+    searchInput.addEventListener("input", filterRecords);
+  }
 
-  $("#clearBtn").addEventListener("click", () => {
-    $("#searchInput").value = "";
-    filterRecords();
-    $("#searchInput").focus();
-  });
+  if (clearBtn && searchInput) {
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      filterRecords();
+      searchInput.focus();
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);
